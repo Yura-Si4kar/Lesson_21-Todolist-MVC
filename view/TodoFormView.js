@@ -1,31 +1,26 @@
 class TodoFormView {
     static FORM_TEMPLATE = `<form class="input_block" class="form">
-            <input class="input_text" type="text" name="name" placeholder="Enter the task!">
-            <p class="error">Wrong! Write at least three characters!</p>
-            <button class="input_btn" type="submit">Click</button>
+        <input class="input_text" type="text" name="name" placeholder="Enter the task!">
+        <button class="input_btn" type="submit">Click</button>        
     </form>`;
-    static SUBMIT_CLASS = '.input_block';
-    static ADD_BTN_CLASS = '.input_btn';
 
-    static createItemElement(todo) {
-        return $(
-            TodoFormView.FORM_TEMPLATE,
+    static TASK_NAME_SELECTOR = '.input_text';
+
+    constructor(config) {
+        this._config = config;
+
+        this.$el = $(TodoFormView.FORM_TEMPLATE).on('submit', (e) =>
+            this.onFormSubmit(e),
         );
     }
-    
-    constructor() {
-        this.$el = $(TodoFormView.FORM_TEMPLATE)
 
-    }
+    onFormSubmit(e) {
+        e.preventDefault();
 
-    renderList(form) {
-        // this.$el.empty();
-        this.$el.append(form.map(TodoFormView.createItemElement));
-    }
+        const taskName = this.$el.find(TodoFormView.TASK_NAME_SELECTOR).val();
 
-    addData() {
-        let value = this.view.input.value;
-        this.model.addTask(value);
-        this.view.renderTask(value);
+        this._config.onSave && this._config.onSave({ title: taskName });
+
+        this.$el.trigger('reset');
     }
 }

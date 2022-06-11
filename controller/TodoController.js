@@ -1,35 +1,30 @@
-class TodoController {
-    constructor($container) { 
-        this._todosListView = new TodoListView({
+class TodosController {
+    constructor($container) {
+        this._view = new TodosView($container, {
             onToggle: (id) => this.toggleTodo(id),
-            onDelete: (id) => this.remuveTodo(id),
+            onDelete: (id) => this.removeTodo(id),
+            onSave: (newTodo) => this.createTodo(newTodo),
         });
 
-        this._todosFormView = new TodoFormView({
-            onAddTitle: () => this.addTitle(title),
-        });
-
-        $container.append(this._todosFormView.$el);       
-        $container.append(this._todosListView.$el);
-
-        this._todosList = new TodoCollection();
+        this._todosList = new TodosCollection();
         this._todosList
             .fetchList()
-            .then(() => this._todosListView.renderList(this._todosList.list));
-    }
-
-    onAddTitle(title) {
-        this._todosList.addTitle(title);
-        this._todosListView.renderList(this._todosList.list);
+            .then(() => this._view.renderList(this._todosList.list));
     }
 
     toggleTodo(id) {
         this._todosList.toggleTodo(id);
-        this._todosListView.renderList(this._todosList.list);
+        this._view.renderList(this._todosList.list);
     }
 
-    remuveTodo(id) {
-        this._todosList.remuveTodo(id);
-        this._todosListView.renderList(this._todosList.list);
+    removeTodo(id) {
+        this._todosList.removeTodo(id);
+        this._view.renderList(this._todosList.list);
+    }
+
+    createTodo(newTodo) {
+        this._todosList
+            .createTodo(newTodo)
+            .then(() => this._view.renderList(this._todosList.list));
     }
 }

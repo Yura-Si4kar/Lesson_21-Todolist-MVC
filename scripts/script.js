@@ -1,3 +1,3 @@
 $(() => {
-    new TodoController($('.container'));
+    new TodosController($('.container'));
 });

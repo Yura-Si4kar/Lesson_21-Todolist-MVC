@@ -1,51 +1,51 @@
-const TODO_URL = 'https://5dd3d5ba8b5e080014dc4bfa.mockapi.io/todos/';
+const TODOS_URL = 'https://5dd3d5ba8b5e080014dc4bfa.mockapi.io/todos/';
 
-class TodoCollection{
+class TodosCollection {
     constructor() {
         this.list = [];
     }
 
     fetchList() {
-        return fetch(TODO_URL)
+        return fetch(TODOS_URL)
             .then((res) => res.json())
-            .then((data) => (this.list = data));        
+            .then((data) => (this.list = data));
     }
 
-    toggleTodo(todoID) {
-        const todoItem = this.list.find(({id}) => id == todoID);
+    toggleTodo(todoId) {
+        const todoItem = this.list.find(({ id }) => id == todoId);
 
         if (!todoItem) {
-            return console.error('Id not found', todoID);
+            return console.error('Id not found', todoId);
         }
 
         todoItem.isDone = !todoItem.isDone;
 
-        fetch(TODO_URL + todoID, {
+        return fetch(TODOS_URL + todoId, {
             method: 'PUT',
             body: JSON.stringify(todoItem),
-            header: {
-                'Content-Type': 'application/json'
+            headers: {
+                'Content-Type': 'application/json',
             },
         });
     }
 
-    remuveTodo(todoID) {
-        this.list = this.list.filter(({ id }) => id != todoID);
-        
-        fetch(TODO_URL + todoID, {
+    removeTodo(todoId) {
+        this.list = this.list.filter(({ id }) => id != todoId);
+
+        return fetch(TODOS_URL + todoId, {
             method: 'DELETE',
         });
     }
 
-    addTitle(value) {
-        this.list.push(value);
-
-        fetch(TODO_URL + todoID, {
-        method: 'POST',
-        body: JSON.stringify(this.list),
-        header: {
-            'Content-Type': 'application/json'
-        },
-    });
+    createTodo(newTodo) {
+        return fetch(TODOS_URL, {
+            method: 'POST',
+            body: JSON.stringify(newTodo),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((res) => res.json())
+            .then((data) => this.list.push(data));
     }
 }

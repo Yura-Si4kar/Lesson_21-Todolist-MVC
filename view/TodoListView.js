@@ -1,44 +1,46 @@
-class TodoListView {   
-    static DONE_CLASS = 'done';
-    static DELETE_CLASS = '.delete-btn'
-    static SELECT_CLASS = '.list_elements';
-    static LIST_HTML = `<ol class="list_block"></ol>`;
+class TodosListView {
+    static LIST_TEMPLATE = `<ol class="input_blocks"></ol>`;
     static LIST_ITEM_TEMPLATE = `<li class="list_elements {{doneClass}}" data-id='{{id}}'>
         {{title}}
-        <span type="button" class="delete-btn">&#10006;</span>
+        <span class="delete-btn">&#10006;</span>
     </li>`;
+
+    static TASK_SELECTOR = '.list_elements';
+    static TASK_DELETE_SELECTOR = '.delete-btn';
+    static TASK_DONE_CLASS = 'done';
 
     static createItemElement(todo) {
         return $(
-            TodoListView.LIST_ITEM_TEMPLATE.replace('{{id}}', todo.id)
+            TodosListView.LIST_ITEM_TEMPLATE.replace('{{id}}', todo.id)
                 .replace('{{title}}', todo.title)
                 .replace(
                     '{{doneClass}}',
-                    todo.isDone ? TodoListView.DONE_CLASS : '',
+                    todo.isDone ? TodosListView.TASK_DONE_CLASS : '',
                 ),
         );
     }
 
     constructor(config = {}) {
-        this.$el = $(TodoListView.LIST_HTML).on(
-            'click',
-            TodoListView.SELECT_CLASS,
-            (e) => config.onToggle && config.onToggle($(e.target).data('id')),
-        ).on('click',
-            TodoListView.DELETE_CLASS,
-            (e) => {
+        this.$el = $(TodosListView.LIST_TEMPLATE)
+            .on(
+                'click',
+                TodosListView.TASK_SELECTOR,
+                (e) =>
+                    config.onToggle && config.onToggle($(e.target).data('id')),
+            )
+            .on('click', TodosListView.TASK_DELETE_SELECTOR, (e) => {
                 e.stopPropagation();
                 config.onDelete &&
-                config.onDelete(
-                $(e.target)
-                    .closest(TodoListView.SELECT_CLASS)
-                    .data('id'))
-            }
-        )
+                    config.onDelete(
+                        $(e.target)
+                            .closest(TodosListView.TASK_SELECTOR)
+                            .data('id'),
+                    );
+            });
     }
 
     renderList(list) {
         this.$el.empty();
-        this.$el.append(list.map(TodoListView.createItemElement));
+        this.$el.append(list.map(TodosListView.createItemElement));
     }
 }
